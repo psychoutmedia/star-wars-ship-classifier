@@ -33,16 +33,14 @@ def classify_image(image_path: str):
         
         print("Resizing image to 224x224...")
         resize_start = time.time()
-        img = Resize(224)(img)  # Adjust to 299/384/etc. if your model was trained at different size
+        img = Resize(224)(img)  # Adjust if your model uses 299/384/etc.
         resize_time = time.time() - resize_start
         print(f"Image resized in {resize_time:.2f}s")
         
         print("Applying transforms manually...")
         trans_start = time.time()
-        # Apply the same item transforms as would happen in test_dl
         x = learn.dls.after_item(img)
-        # Add batch dimension and apply batch transforms (normalization etc.)
-        x = x.unsqueeze(0)  # shape: [1, C, H, W]
+        x = x.unsqueeze(0)
         x = learn.dls.after_batch(x)
         trans_time = time.time() - trans_start
         print(f"Transforms applied in {trans_time:.2f}s")
@@ -50,10 +48,8 @@ def classify_image(image_path: str):
         print("Running manual forward pass...")
         inf_start = time.time()
         with torch.no_grad():
-            # Direct model prediction
             preds = learn.model(x)
-            # Get probabilities (assuming standard classification head)
-            probs = learn.dls.loss_func.module.activation(preds).squeeze(0)
+            probs = torch.softmax(preds, dim=1).squeeze(0)
             pred_idx = probs.argmax().item()
             pred_class = categories[pred_idx]
         inf_time = time.time() - inf_start
@@ -64,7 +60,6 @@ def classify_image(image_path: str):
         overall_time = time.time() - overall_start
         print(f"Total classification time: {overall_time:.2f}s")
         
-        # Return dict for Gradio Label
         return {str(c): float(p) for c, p in zip(categories, probs)}
     
     except Exception as e:
@@ -72,15 +67,14 @@ def classify_image(image_path: str):
         print(f"ERROR during classification (after {error_time:.2f}s): {str(e)}")
         import traceback
         traceback.print_exc()
-        raise  # Let Gradio display the error if possible
+        raise
 
-# Interface setup
 demo = gr.Interface(
     fn=classify_image,
     inputs=gr.Image(type="filepath"),
     outputs=gr.Label(num_top_classes=3),
     title="Star Wars Ship Classifier",
-    description="Classifies Star Wars ships (using manual inference to avoid fastai predict hangs).",
+    description="Classifies Star Wars ships (manual inference to avoid hangs).",
 )
 
 demo.launch(
