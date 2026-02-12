@@ -18,6 +18,5 @@ demo = gr.Interface(
     outputs=gr.Label()
 )
 
-# 3. Launch - keep it empty for HF Spaces
-if __name__ == "__main__":
-    demo.launch()
+# 3. Launch at module level for HF Spaces (Gradio 5 SSR imports the module)
+demo.launch()
