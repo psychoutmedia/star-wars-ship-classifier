@@ -8,7 +8,7 @@ from fastai.vision.all import *
 torch.set_num_threads(1)
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
-torch.backends.cudnn.benchmark = False  # avoid any unexpected behavior
+torch.backends.cudnn.benchmark = False
 
 print("Loading model...")
 start_load = time.time()
@@ -31,6 +31,13 @@ def classify_image(image_path: str):
         img_load_time = time.time() - img_start
         print(f"Image loaded in {img_load_time:.2f}s")
         
+        # Resize to standard size to speed up inference dramatically on CPU
+        print("Resizing image to 224x224...")
+        resize_start = time.time()
+        img = Resize(224)(img)  # Change to 299 or 384 if your model was trained on a different size
+        resize_time = time.time() - resize_start
+        print(f"Image resized in {resize_time:.2f}s")
+        
         print("Running prediction...")
         pred_start = time.time()
         with torch.no_grad():
@@ -43,7 +50,7 @@ def classify_image(image_path: str):
         overall_time = time.time() - overall_start
         print(f"Total classification time: {overall_time:.2f}s")
         
-        # Return dictionary for gr.Label
+        # Return dictionary for gr.Label (shows top classes with probabilities)
         return {str(c): float(p) for c, p in zip(classes, probs)}
     
     except Exception as e:
@@ -59,14 +66,13 @@ demo = gr.Interface(
     inputs=gr.Image(type="filepath"),
     outputs=gr.Label(num_top_classes=3),
     title="Star Wars Ship Classifier",
-    description="Upload an image of a Star Wars ship to classify it.",
-    # You can add examples=["example1.jpg", "example2.jpg"] if you upload sample images
+    description="Upload an image of a Star Wars ship to classify it (resized to 224×224 for speed).",
 )
 
-# Launch with debug + show errors
+# Launch with debug mode
 demo.launch(
     server_name="0.0.0.0",
     server_port=int(os.getenv("PORT", "7860")),
-    debug=True,          # More verbose logs — very helpful on HF
-    show_error=True,     # Shows exceptions in the UI when possible
+    debug=True,
+    show_error=True,
 )
