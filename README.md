@@ -4,8 +4,8 @@ emoji: 🚀
 colorFrom: blue
 colorTo: black
 sdk: gradio
-python_version: "3.11" # This keeps the environment stable
 sdk_version: 5.23.1
+python_version: 3.11
 app_file: app.py
 pinned: false
 ---
