@@ -14,7 +14,7 @@ def classify_image(img):
 # 2. Build the interface
 demo = gr.Interface(
     fn=classify_image, 
-    inputs=gr.Image(), 
+    inputs=gr.Image(type="pil"),
     outputs=gr.Label()
 )
 
