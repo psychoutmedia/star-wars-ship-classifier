@@ -1,4 +1,4 @@
-fastai
+fastai==2.8.6
 gradio==5.23.1
 pydantic>=2.10,<2.12
 ipython

@@ -7,7 +7,7 @@ learn = load_learner('starwars_model.pkl')
 categories = ('tie fighter star wars', 'x-wing starfighter')
 
 def classify_image(img):
-    img = PILImage.create(img).convert("RGB")
+    img = PILImage.create(img)
     pred, idx, probs = learn.predict(img)
     return dict(zip(categories, map(float, probs)))
 
