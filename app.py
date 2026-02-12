@@ -19,4 +19,4 @@ demo = gr.Interface(
 )
 
 # 3. Launch at module level for HF Spaces (Gradio 5 SSR imports the module)
-demo.launch()
+demo.launch(ssr_mode=False)
