@@ -22,4 +22,5 @@ label = gr.Label()
 
 
 intf = gr.Interface(fn=classify_image, inputs=image, outputs=label)
-intf.launch()
+# Enable the queue and simplify the launch
+intf.queue().launch()
