@@ -7,9 +7,17 @@ learn = load_learner('starwars_model.pkl')
 categories = ('tie fighter star wars', 'x-wing starfighter')
 
 def classify_image(img):
-    img = PILImage.create(img)
-    pred, idx, probs = learn.predict(img)
-    return dict(zip(categories, map(float, probs)))
+    import traceback
+    try:
+        print(f"Called with type: {type(img)}", flush=True)
+        img = PILImage.create(img)
+        print("PILImage created", flush=True)
+        pred, idx, probs = learn.predict(img)
+        print(f"Prediction: {pred}", flush=True)
+        return dict(zip(categories, map(float, probs)))
+    except Exception as e:
+        traceback.print_exc()
+        raise
 
 # 2. Build the interface
 demo = gr.Interface(
