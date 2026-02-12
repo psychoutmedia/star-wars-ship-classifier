@@ -1,9 +1,17 @@
+import os
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+
+import torch
+torch.set_num_threads(1)
+
 import gradio as gr
 from fastai.vision.all import *
+from fastai.callback.progress import ProgressCallback
 
 # 1. Load the model
 learn = load_learner('starwars_model.pkl')
-learn.dls.num_workers = 0
+learn.remove_cb(ProgressCallback)
 categories = learn.dls.vocab
 
 def classify_image(img):
