@@ -11,13 +11,40 @@ pinned: false
 ---
 
 
-# 🚀 Star Wars Ship Classifier
+# 🚀 Star Wars Ship Classifier (Fastai + Gradio)
 ### An AI that distinguishes between X-Wings and TIE Fighters with 96% accuracy.
 
 [![Live Demo](https://img.shields.io/badge/Demo-Hugging%20Face-ffcc00?style=for-the-badge&logo=huggingface)](YOUR_HUGGING_FACE_SPACE_URL_HERE)
 
 ## 📖 Overview
 This project is a deep learning image classifier built using the **fastai** library. It was developed as part of my journey through the Fast.ai "Practical Deep Learning for Coders" course. The model can identify two iconic Star Wars starfighters, even when presented with "Stealth" variants or different artistic styles.
+
+🛠️ The "Hanging-Inference" Fix
+Standard Fastai deployments often suffer from an "infinite spinning" bug on Hugging Face due to Dataloader deadlocks in restricted container environments.
+
+This project implements a custom "Manual Inference" pipeline to solve this:
+
+Bypasses learn.predict(): Directly calls learn.model(x) to avoid silent multiprocessing deadlocks.
+
+CPU Hardening: Explicitly locks PyTorch to a single thread (torch.set_num_threads(1)) to prevent CPU contention on shared hardware.
+
+Manual Transforms: Hand-codes the after_item and after_batch pipeline to ensure 100% reliability without background worker overhead.
+
+🧪 Technical Stack
+Framework: Fastai 2.7.x (PyTorch backend)
+
+Interface: Gradio 4.44.0 (Pinning for SSR stability)
+
+Optimization: Manual Logit processing & Softmax calculation
+
+Deployment: Hugging Face Spaces (CPU Basic)
+
+📈 Performance
+Inference Speed: ~0.4s per image (Post-model load)
+
+Memory Footprint: < 500MB RAM
+
+Input: Automatically resizes any image to 224x224 for optimal CPU processing.
 
 ## 🛠️ The Tech Stack
 * **Language:** Python
