@@ -1,5 +1,4 @@
 fastai
-gradio==4.44.1
-huggingface_hub<1.0.0
-pydantic==2.10.6
+gradio==5.23.1
+pydantic>=2.10,<2.12
 ipython
