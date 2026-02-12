@@ -27,3 +27,13 @@ The model achieved a **96% accuracy** rate on the validation set.
 1. Clone the repo:
    ```bash
    git clone git@github.com:YOUR_USERNAME/star-wars-classifier.git
+   ```
+2. Install dependencies:
+   ```bash   
+   pip install -r requirements.txt
+   ```
+3. Run the app:
+   ```bash   
+   python app.py
+   ```
+Developed by Mark Stephenson for PsychoutMedia Feb 2026
