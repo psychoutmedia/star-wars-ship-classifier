@@ -13,8 +13,10 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
+      - name: Install Git LFS
+        run: git lfs install    
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git push --force https://Psychoutmedia:$HF_TOKEN@huggingface.co/spaces/Psychoutmedia/star-wars-classifier main
+          git push --force https://Psychoutmedia:$HF_TOKEN@huggingface.co/spaces/Psychoutmedia/star_wars_ship_classification main
