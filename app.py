@@ -1,26 +1,24 @@
 import gradio as gr
 from fastai.vision.all import *
 
-# Load the brain 
+# Load the model
 learn = load_learner('starwars_model.pkl')
 
 categories = ('tie fighter star wars', 'x-wing starfighter')
 
 def classify_image(img):
-    # Ensure it's a PIL Image and in RGB mode
+    # Ensure image is in RGB mode (Fastai expects 3 channels)
     img = PILImage.create(img).convert("RGB")
     
-    # Using 'with learn.no_bar()' can sometimes help with 'dict' errors 
-    # as it prevents fastai from trying to 'add' progress bar dictionaries
-    with learn.no_bar():
-        pred, idx, probs = learn.predict(img)
-        
+    # Run prediction - we use float() to ensure it's a simple number
+    pred, idx, probs = learn.predict(img)
     return dict(zip(categories, map(float, probs)))
 
-image = gr.Image(type="pil")
-label = gr.Label()
+# Use the 'image' and 'label' shortcuts for maximum stability
+image_input = gr.Image()
+label_output = gr.Label()
 
+intf = gr.Interface(fn=classify_image, inputs=image_input, outputs=label_output)
 
-intf = gr.Interface(fn=classify_image, inputs=image, outputs=label)
-# Enable the queue and simplify the launch
-intf.launch()
+# CRITICAL: .queue() prevents the "Infinite Spin" by handling requests one-by-one
+intf.queue().launch()
