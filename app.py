@@ -17,17 +17,11 @@ categories = learn.dls.vocab   # usually list of str
 
 def classify_image(image_path: str):
     print(f"Starting classification: {image_path}")
-    try:
-        # learn.predict returns: (predicted class, probs tensor, class names)
+    with torch.no_grad():
         pred_class, probs, classes = learn.predict(PILImage.create(image_path))
-        print("Prediction done")
-        
-        # Return dict for gr.Label (keys = class names, values = probs)
-        return {str(c): float(p) for c, p in zip(classes, probs)}
+    print("Prediction done - probs:", probs.tolist())  # debug
     
-    except Exception as e:
-        print(f"Error in classification: {e}")
-        raise  # let Gradio show the error
+    return {str(c): float(p) for c, p in zip(classes, probs)}
 
 # Interface without concurrency/queue extras
 demo = gr.Interface(
