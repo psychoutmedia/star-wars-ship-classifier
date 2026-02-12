@@ -1,3 +1,12 @@
+---
+title: Star Wars Ship Classifier
+emoji: 🚀
+sdk: gradio
+app_file: app.py
+pinned: false
+---
+
+
 # 🚀 Star Wars Ship Classifier
 ### An AI that distinguishes between X-Wings and TIE Fighters with 96% accuracy.
 
