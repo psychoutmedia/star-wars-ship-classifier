@@ -20,5 +20,9 @@ label_output = gr.Label()
 
 intf = gr.Interface(fn=classify_image, inputs=image_input, outputs=label_output)
 
-# CRITICAL: .queue() prevents the "Infinite Spin" by handling requests one-by-one
-intf.queue().launch()
+# Force Gradio to use the settings that Hugging Face infrastructure expects in 2026
+intf.queue().launch(
+    show_error=True, 
+    max_threads=1, 
+    allowed_paths=["/"]
+)
