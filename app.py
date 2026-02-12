@@ -13,13 +13,17 @@ learn.dls.num_workers = 0
 categories = learn.dls.vocab
 
 def classify_image(image_path: str):
+    print("Starting Classification",image_path)
     img = PILImage.create(image_path)
-
-    # Avoid predict() hanging: make a test dataloader with num_workers=0 explicitly
-    dl = learn.dls.test_dl([img], num_workers=0)
-    preds, _ = learn.get_preds(dl=dl)
-    probs = preds[0]
-
+    print("Image Loaded")
+    with torch.no_grad():
+        # Create fresh test dataloader every time
+        dl = learn.dls.test_dl([img], num_workers=0, shuffle=False)
+        print("DataLoader Created")
+        preds, _ = learn.get_preds(dl=dl)
+        print("Predictions Made")    
+    probs = preds[0].cpu().numpy()  # explicit .cpu()
+    
     return {categories[i]: float(probs[i]) for i in range(len(categories))}
 
 demo = gr.Interface(
@@ -27,10 +31,7 @@ demo = gr.Interface(
     inputs=gr.Image(type="filepath"),
     outputs=gr.Label(num_top_classes=3),
     title="Star Wars Ship Classifier",
-    concurrency_limit=1,  # valid in Gradio 5 Interface
 )
-
-demo.queue(max_size=20, default_concurrency_limit=1)
 
 demo.launch(
     server_name="0.0.0.0",
