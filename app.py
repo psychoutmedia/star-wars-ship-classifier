@@ -3,6 +3,7 @@ import time
 import torch
 import gradio as gr
 from fastai.vision.all import *
+import fastai  # for torch_core.defaults
 
 # Force single-threaded / stable CPU behavior
 torch.set_num_threads(1)
@@ -13,6 +14,15 @@ torch.backends.cudnn.benchmark = False
 print("Loading model...")
 start_load = time.time()
 learn = load_learner("starwars_model.pkl", cpu=True)
+
+# === THE SURGICAL CPU FIX ===
+fastai.torch_core.defaults.device = 'cpu'  # global tensor default
+learn.model.cpu()                           # model explicitly on CPU
+learn.dls.cpu()                             # dataloaders explicitly on CPU
+# (num_workers=0 already below, but reinforced)
+
+print("Model configured for stable CPU inference")
+
 load_time = time.time() - start_load
 print(f"Model loaded in {load_time:.2f} seconds")
 
@@ -31,10 +41,9 @@ def classify_image(image_path: str):
         img_load_time = time.time() - img_start
         print(f"Image loaded in {img_load_time:.2f}s")
         
-        # Resize to standard size to speed up inference dramatically on CPU
         print("Resizing image to 224x224...")
         resize_start = time.time()
-        img = Resize(224)(img)  # Change to 299 or 384 if your model was trained on a different size
+        img = Resize(224)(img)  # adjust to your model's training size if not 224
         resize_time = time.time() - resize_start
         print(f"Image resized in {resize_time:.2f}s")
         
@@ -50,7 +59,6 @@ def classify_image(image_path: str):
         overall_time = time.time() - overall_start
         print(f"Total classification time: {overall_time:.2f}s")
         
-        # Return dictionary for gr.Label (shows top classes with probabilities)
         return {str(c): float(p) for c, p in zip(classes, probs)}
     
     except Exception as e:
@@ -58,18 +66,17 @@ def classify_image(image_path: str):
         print(f"ERROR during classification (after {error_time:.2f}s): {str(e)}")
         import traceback
         traceback.print_exc()
-        raise  # Let Gradio show the error in UI if possible
+        raise
 
-# Create interface
+# Interface
 demo = gr.Interface(
     fn=classify_image,
     inputs=gr.Image(type="filepath"),
     outputs=gr.Label(num_top_classes=3),
     title="Star Wars Ship Classifier",
-    description="Upload an image of a Star Wars ship to classify it (resized to 224×224 for speed).",
+    description="Upload a Star Wars ship image (resized to 224×224 for faster CPU inference).",
 )
 
-# Launch with debug mode
 demo.launch(
     server_name="0.0.0.0",
     server_port=int(os.getenv("PORT", "7860")),
