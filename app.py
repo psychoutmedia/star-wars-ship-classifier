@@ -12,7 +12,7 @@ torch.backends.cudnn.benchmark = False
 
 print("Loading model...")
 start_load = time.time()
-learn = load_learner("starwars_model.pkl", cpu=True)
+learn = load_learner("starwars_model_v2.pkl", cpu=True)
 load_time = time.time() - start_load
 print(f"Model loaded in {load_time:.2f} seconds")
 
@@ -60,7 +60,8 @@ def classify_image(image_path: str):
         overall_time = time.time() - overall_start
         print(f"Total classification time: {overall_time:.2f}s")
         
-        return {str(c): float(p) for c, p in zip(categories, probs)}
+        #return {str(c): float(p) for c, p in zip(categories, probs)}
+        return {str(c).split(' ')[0].replace('-', ' ').title(): float(p) for c, p in zip(categories, probs)}
     
     except Exception as e:
         error_time = time.time() - overall_start
