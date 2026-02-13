@@ -12,12 +12,12 @@ pinned: false
 
 
 # 🚀 Star Wars Ship Classifier (Fastai + Gradio)
-### An AI that distinguishes between X-Wings and TIE Fighters with 96% accuracy.
+### An AI that distinguishes between X-Wings, Y-Wings and TIE Fighters with 96% accuracy.
 
-[![Live Demo](https://img.shields.io/badge/Demo-Hugging%20Face-ffcc00?style=for-the-badge&logo=huggingface)](YOUR_HUGGING_FACE_SPACE_URL_HERE)
+[![Live Demo](https://img.shields.io/badge/Demo-Hugging%20Face-ffcc00?style=for-the-badge&logo=huggingface)](https://huggingface.co/spaces/Psychoutmedia/star_wars_ship_classification)
 
 ## 📖 Overview
-This project is a deep learning image classifier built using the **fastai** library. It was developed as part of my journey through the Fast.ai "Practical Deep Learning for Coders" course. The model can identify two iconic Star Wars starfighters, even when presented with "Stealth" variants or different artistic styles.
+This project is a deep learning image classifier built using the **fastai** library. It was developed as part of my journey through the Fast.ai "Practical Deep Learning for Coders" course. The model can identify three iconic Star Wars starfighters, even when presented with "Stealth" variants or different artistic styles.
 
 🛠️ The "Hanging-Inference" Fix
 Standard Fastai deployments often suffer from an "infinite spinning" bug on Hugging Face due to Dataloader deadlocks in restricted container environments.
